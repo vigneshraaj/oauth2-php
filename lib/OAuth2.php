@@ -85,6 +85,7 @@ class OAuth2 {
   const CONFIG_TOKEN_TYPE             = 'token_type';             // Token type to respond with. Currently only "Bearer" supported.
   const CONFIG_WWW_REALM              = 'realm';
   const CONFIG_ENFORCE_INPUT_REDIRECT = 'enforce_redirect';       // Set to true to enforce redirect_uri on input for both authorize and token steps.
+  const CONFIG_ENFORCE_STATE          = 'enforce_state';          // Set to true to enforce state to be passed in authorization (see http://tools.ietf.org/html/draft-ietf-oauth-v2-21#section-10.12)
   
 	/**
    * Regex to filter out the client identifier (described in Section 2 of IETF draft).
@@ -354,6 +355,7 @@ class OAuth2 {
   		self::CONFIG_WWW_REALM              => self::DEFAULT_WWW_REALM,
   		self::CONFIG_TOKEN_TYPE             => self::TOKEN_TYPE_BEARER,
   		self::CONFIG_ENFORCE_INPUT_REDIRECT => FALSE,
+  		self::CONFIG_ENFORCE_STATE          => FALSE,
       self::CONFIG_SUPPORTED_SCOPES       => array() // This is expected to be passed in on construction. Scopes can be an aribitrary string.  
   	);
   }
@@ -551,15 +553,13 @@ class OAuth2 {
    * This would be called from the "/token" endpoint as defined in the spec.
    * Obviously, you can call your endpoint whatever you want.
    * 
-   * FIXME: According to section 4.1.3 (http://tools.ietf.org/html/draft-ietf-oauth-v2-20#section-4.1.3),
-   * if the "Authorization Request" (auth_code) contained the redirect_uri, then it becomes mandatory when requesting the access token.
-   * This is *not* currently enforced in this library.
-   * 
    * @param $inputData - The draft specifies that the parameters should be
    * retreived from POST, but you can override to whatever method you like.
    * @throws OAuth2ServerException
    * 
    * @see http://tools.ietf.org/html/draft-ietf-oauth-v2-20#section-4
+   * @see http://tools.ietf.org/html/draft-ietf-oauth-v2-21#section-10.6
+   * @see http://tools.ietf.org/html/draft-ietf-oauth-v2-21#section-4.1.3
    *
    * @ingroup oauth2_section_4
    */
@@ -617,10 +617,13 @@ class OAuth2 {
         if ($stored === NULL || $client[0] != $stored["client_id"])
           throw new OAuth2ServerException(self::HTTP_BAD_REQUEST, self::ERROR_INVALID_GRANT, "Refresh token doesn't exist or is invalid for the client");
         
-        // Validate the redirect URI
+        // Validate the redirect URI. They must match EXACTLY (as opposed to authorization step where they only need to have the same beginning).
+        // See http://tools.ietf.org/html/draft-ietf-oauth-v2-21#section-10.6
+        // Because we store the validated redirect_uri in getAuthorizeParams() (which is either the stored or input param) we are able to
+        // do this check everytime (regardless of whether a confidential or public client is being used).
         $missing = (!$stored["redirect_uri"] && !$input["redirect_uri"]); // both stored and supplied are missing - we must have at least one!
-        if ($missing || !$this->validateRedirectUri($input["redirect_uri"], $stored["redirect_uri"]))
-          throw new OAuth2ServerException(self::HTTP_BAD_REQUEST, self::ERROR_REDIRECT_URI_MISMATCH, "The redirect URI is missing or invalid");
+        if ($missing || $input["redirect_uri"] !== $stored["redirect_uri"])
+          throw new OAuth2ServerException(self::HTTP_BAD_REQUEST, self::ERROR_REDIRECT_URI_MISMATCH, "The redirect URI is missing or do not match");
 
         if ($stored["expires"] < time())
           throw new OAuth2ServerException(self::HTTP_BAD_REQUEST, self::ERROR_INVALID_GRANT, "The authorization code has expired");
@@ -751,8 +754,10 @@ class OAuth2 {
 
   /**
    * Pull the authorization request data out of the HTTP request.
-   * The redirect_uri is OPTIONAL as per draft 20. But your implenetation can enforce it
-   * by setting CONFIG_ENFORCE_INPUT_REDIRECT to true.
+   *   - The redirect_uri is OPTIONAL as per draft 20. But your implementation can enforce it
+   *     by setting CONFIG_ENFORCE_INPUT_REDIRECT to true.
+   *   - The state is OPTIONAL but recommended to enforce CSRF. Draft 21 states, however, that
+   *     CSRF protection is MANDATORY. You can enforce this by setting the CONFIG_ENFORCE_STATE to true.
    *
    * @param $inputData - The draft specifies that the parameters should be
    * retreived from GET, but you can override to whatever method you like.
@@ -762,6 +767,7 @@ class OAuth2 {
    *
    * @throws OAuth2ServerException
    * @see http://tools.ietf.org/html/draft-ietf-oauth-v2-20#section-4.1.1
+   * @see http://tools.ietf.org/html/draft-ietf-oauth-v2-21#section-10.12
    * 
    * @ingroup oauth2_section_3
    */
@@ -820,6 +826,10 @@ class OAuth2 {
     // Validate that the requested scope is supported
     if ($input["scope"] && !$this->checkScope($input["scope"], $this->getVariable(self::CONFIG_SUPPORTED_SCOPES)))
       throw new OAuth2RedirectException($input["redirect_uri"], self::ERROR_INVALID_SCOPE, NULL, $input["state"]);
+      
+    // Validate state parameter exists (if configured to enforce this)
+    if ($this->getVariable(self::CONFIG_ENFORCE_STATE) && !$input["state"]) 
+      throw new OAuth2RedirectException(self::HTTP_BAD_REQUEST, self::ERROR_INVALID_REQUEST, "The state parameter is required.");
 
     // Return retreived client details together with input
     return ($input + $stored);
