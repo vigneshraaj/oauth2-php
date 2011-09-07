@@ -705,7 +705,7 @@ class OAuth2 {
       
     // Check scope, if provided
     if ($input["scope"] && (!is_array($stored) || !isset($stored["scope"]) || !$this->checkScope($input["scope"], $stored["scope"])))
-      throw new OAuth2ServerException(self::HTTP_BAD_REQUEST, self::ERROR_INVALID_SCOPE);
+      throw new OAuth2ServerException(self::HTTP_BAD_REQUEST, self::ERROR_INVALID_SCOPE, 'An unsupported scope was requested.');
 
     $user_id = isset($stored['user_id']) ? $stored['user_id'] : null;
     $token = $this->createAccessToken($client[0], $user_id, $stored['scope']);
@@ -825,7 +825,7 @@ class OAuth2 {
 
     // Validate that the requested scope is supported
     if ($input["scope"] && !$this->checkScope($input["scope"], $this->getVariable(self::CONFIG_SUPPORTED_SCOPES)))
-      throw new OAuth2RedirectException($input["redirect_uri"], self::ERROR_INVALID_SCOPE, NULL, $input["state"]);
+      throw new OAuth2RedirectException($input["redirect_uri"], self::ERROR_INVALID_SCOPE, 'An unsupported scope was requested.', $input["state"]);
       
     // Validate state parameter exists (if configured to enforce this)
     if ($this->getVariable(self::CONFIG_ENFORCE_STATE) && !$input["state"]) 
