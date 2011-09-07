@@ -807,7 +807,7 @@ class OAuth2 {
       throw new OAuth2ServerException(self::HTTP_BAD_REQUEST, self::ERROR_REDIRECT_URI_MISMATCH, 'The redirect URI is mandatory and was not supplied.');
     }
     if ($stored["redirect_uri"] && $input["redirect_uri"] && !$this->validateRedirectUri($input["redirect_uri"], $stored["redirect_uri"])) {
-      throw new OAuth2ServerException(self::HTTP_BAD_REQUEST, self::ERROR_REDIRECT_URI_MISMATCH, 'The rediect URI provided is missing or does not match');
+      throw new OAuth2ServerException(self::HTTP_BAD_REQUEST, self::ERROR_REDIRECT_URI_MISMATCH, 'The redirect URI provided is missing or does not match');
     }
     
     // Select the redirect URI
@@ -829,7 +829,7 @@ class OAuth2 {
       
     // Validate state parameter exists (if configured to enforce this)
     if ($this->getVariable(self::CONFIG_ENFORCE_STATE) && !$input["state"]) 
-      throw new OAuth2RedirectException(self::HTTP_BAD_REQUEST, self::ERROR_INVALID_REQUEST, "The state parameter is required.");
+      throw new OAuth2RedirectException($input["redirect_uri"], self::ERROR_INVALID_REQUEST, "The state parameter is required.");
 
     // Return retreived client details together with input
     return ($input + $stored);
