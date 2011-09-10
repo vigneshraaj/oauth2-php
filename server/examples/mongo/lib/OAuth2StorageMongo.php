@@ -6,10 +6,10 @@
  * 
  */
 
-require_once __DIR__.'/../../../../lib/OAuth2.php';
-require_once __DIR__.'/../../../../lib/IOAuth2Storage.php';
-require_once __DIR__.'/../../../../lib/IOAuth2GrantCode.php';
-require_once __DIR__.'/../../../../lib/IOAuth2RefreshTokens.php';
+require __DIR__.'/../../../../lib/OAuth2.php';
+require __DIR__.'/../../../../lib/IOAuth2Storage.php';
+require __DIR__.'/../../../../lib/IOAuth2GrantCode.php';
+require __DIR__.'/../../../../lib/IOAuth2RefreshTokens.php';
 
 /**
  * Mongo storage engine for the OAuth2 Library.
