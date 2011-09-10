@@ -554,7 +554,7 @@ class OAuth2 {
    * Obviously, you can call your endpoint whatever you want.
    * 
    * @param $inputData - The draft specifies that the parameters should be
-   * retreived from POST, but you can override to whatever method you like.
+   * retrieved from POST, but you can override to whatever method you like.
    * @throws OAuth2ServerException
    * 
    * @see http://tools.ietf.org/html/draft-ietf-oauth-v2-20#section-4
@@ -760,7 +760,7 @@ class OAuth2 {
    *     CSRF protection is MANDATORY. You can enforce this by setting the CONFIG_ENFORCE_STATE to true.
    *
    * @param $inputData - The draft specifies that the parameters should be
-   * retreived from GET, but you can override to whatever method you like.
+   * retrieved from GET, but you can override to whatever method you like.
    * @return
    *   The authorization parameters so the authorization server can prompt
    *   the user for approval if valid.
@@ -831,7 +831,7 @@ class OAuth2 {
     if ($this->getVariable(self::CONFIG_ENFORCE_STATE) && !$input["state"]) 
       throw new OAuth2RedirectException($input["redirect_uri"], self::ERROR_INVALID_REQUEST, "The state parameter is required.");
 
-    // Return retreived client details together with input
+    // Return retrieved client details together with input
     return ($input + $stored);
   }
 
