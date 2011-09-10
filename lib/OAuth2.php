@@ -1057,8 +1057,8 @@ class OAuth2 {
    */
   protected function getAuthorizationHeader() {
     return array(
-      'PHP_AUTH_USER' => $_SERVER['PHP_AUTH_USER'],
-      'PHP_AUTH_PW'   => $_SERVER['PHP_AUTH_PW']    
+      'PHP_AUTH_USER' => isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : '',
+      'PHP_AUTH_PW'   => isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : '',
     );
   }
 
