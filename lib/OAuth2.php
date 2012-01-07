@@ -623,13 +623,10 @@ class OAuth2 {
         if ($stored === NULL || $client[0] != $stored["client_id"])
           throw new OAuth2ServerException(self::HTTP_BAD_REQUEST, self::ERROR_INVALID_GRANT, "Refresh token doesn't exist or is invalid for the client");
         
-        // Validate the redirect URI. They must match EXACTLY (as opposed to authorization step where they only need to have the same beginning).
-        // See http://tools.ietf.org/html/draft-ietf-oauth-v2-21#section-10.6
-        // Because we store the validated redirect_uri in getAuthorizeParams() (which is either the stored or input param) we are able to
-        // do this check everytime (regardless of whether a confidential or public client is being used).
-        $missing = (!$stored["redirect_uri"] && !$input["redirect_uri"]); // both stored and supplied are missing - we must have at least one!
-        if ($missing || $input["redirect_uri"] !== $stored["redirect_uri"])
+        // Validate the redirect URI. If a redirect URI has been provided on input, it must be validated
+        if ($input["redirect_uri"] && !$this->validateRedirectUri($input["redirect_uri"], $stored["redirect_uri"])) {
           throw new OAuth2ServerException(self::HTTP_BAD_REQUEST, self::ERROR_REDIRECT_URI_MISMATCH, "The redirect URI is missing or do not match");
+        }
 
         if ($stored["expires"] < time())
           throw new OAuth2ServerException(self::HTTP_BAD_REQUEST, self::ERROR_INVALID_GRANT, "The authorization code has expired");
@@ -812,6 +809,7 @@ class OAuth2 {
     if ($this->getVariable(self::CONFIG_ENFORCE_INPUT_REDIRECT) && !$input["redirect_uri"]) {
       throw new OAuth2ServerException(self::HTTP_BAD_REQUEST, self::ERROR_REDIRECT_URI_MISMATCH, 'The redirect URI is mandatory and was not supplied.');
     }
+    // Only need to validate if redirect_uri provided on input and stored.
     if ($stored["redirect_uri"] && $input["redirect_uri"] && !$this->validateRedirectUri($input["redirect_uri"], $stored["redirect_uri"])) {
       throw new OAuth2ServerException(self::HTTP_BAD_REQUEST, self::ERROR_REDIRECT_URI_MISMATCH, 'The redirect URI provided is missing or does not match');
     }
@@ -1092,7 +1090,7 @@ class OAuth2 {
    */
   protected function validateRedirectUri($inputUri, $storedUri) {
   	if (!$inputUri || !$storedUri) {
-  	  return true; // need both to validate
+  	  return false; // if either one is missing, assume INVALID
   	}
   	return strcasecmp(substr($inputUri, 0, strlen($storedUri)), $storedUri) === 0;
   }
