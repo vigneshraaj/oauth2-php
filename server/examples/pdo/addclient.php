@@ -10,8 +10,8 @@
 include "lib/PDOOAuth2.php";
 
 if ($_POST && isset($_POST["client_id"]) && isset($_POST["client_secret"]) && isset($_POST["redirect_uri"])) {
-  $oauth = new OAuth2StoragePDO();
-  $oauth->addClient($_POST["client_id"], $_POST["client_secret"], $_POST["redirect_uri"]);
+	$oauth = new OAuth2StoragePDO();
+	$oauth->addClient($_POST["client_id"], $_POST["client_secret"], $_POST["redirect_uri"]);
 }
 
 ?>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Storage engines that support the "Authorization Code"
  * grant type should implement this interface
@@ -7,17 +8,17 @@
  * @see http://tools.ietf.org/html/draft-ietf-oauth-v2-20#section-4.1
  */
 interface IOAuth2GrantCode extends IOAuth2Storage {
-  
-  /**
-   * The Authorization Code grant type supports a response type of "code". 
-   * 
-   * @var string
-   * @see http://tools.ietf.org/html/draft-ietf-oauth-v2-20#section-1.4.1
-   * @see http://tools.ietf.org/html/draft-ietf-oauth-v2-20#section-4.2
-   */
-  const RESPONSE_TYPE_CODE = OAuth2::RESPONSE_TYPE_AUTH_CODE;
-  
-  /**
+	
+	/**
+	 * The Authorization Code grant type supports a response type of "code". 
+	 * 
+	 * @var string
+	 * @see http://tools.ietf.org/html/draft-ietf-oauth-v2-20#section-1.4.1
+	 * @see http://tools.ietf.org/html/draft-ietf-oauth-v2-20#section-4.2
+	 */
+	const RESPONSE_TYPE_CODE = OAuth2::RESPONSE_TYPE_AUTH_CODE;
+
+	/**
 	 * Fetch authorization code data (probably the most common grant type).
 	 *
 	 * Retrieve the stored data for the given authorization code.
@@ -67,5 +68,5 @@ interface IOAuth2GrantCode extends IOAuth2Storage {
 	 * @ingroup oauth2_section_4
 	 */
 	public function setAuthCode($code, $client_id, $user_id, $redirect_uri, $expires, $scope = NULL);
-	
+
 }

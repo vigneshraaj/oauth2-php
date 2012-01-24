@@ -14,28 +14,29 @@ require "lib/MongoOAuth2.php";
 $oauth = new MongoOAuth2();
 
 if ($_POST) {
-  $oauth->finishClientAuthorization($_POST["accept"] == "Yep", $_POST);
+	$oauth->finishClientAuthorization($_POST["accept"] == "Yep", $_POST);
 }
 
 try {
-  $auth_params = $oauth->getAuthorizeParams();
+	$auth_params = $oauth->getAuthorizeParams();
 } catch (OAuth2ServerException $oauthError) {
-  $oauthError->sendHttpResponse();
+	$oauthError->sendHttpResponse();
 }
 
 ?>
 <html>
-  <head>Authorize</head>
-  <body>
-    <form method="post" action="authorize.php">
+<head>
+Authorize
+</head>
+<body>
+<form method="post" action="authorize.php">
       <?php foreach ($auth_params as $k => $v) { ?>
-      <input type="hidden" name="<?php echo $k ?>" value="<?php echo $v ?>" />
+      <input type="hidden" name="<?php echo $k ?>"
+	value="<?php echo $v ?>" />
       <?php } ?>
       Do you authorize the app to do its thing?
-      <p>
-        <input type="submit" name="accept" value="Yep" />
-        <input type="submit" name="accept" value="Nope" />
-      </p>
-    </form>
-  </body>
+      <p><input type="submit" name="accept" value="Yep" /> <input
+	type="submit" name="accept" value="Nope" /></p>
+</form>
+</body>
 </html>

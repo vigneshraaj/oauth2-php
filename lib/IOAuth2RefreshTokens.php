@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Storage engines that want to support refresh tokens should
  * implement this interface.
@@ -8,8 +9,8 @@
  * @see http://tools.ietf.org/html/draft-ietf-oauth-v2-20#section-1.5
  */
 interface IOAuth2RefreshTokens extends IOAuth2Storage {
-  
-  /**
+
+	/**
 	 * Grant refresh access tokens.
 	 *
 	 * Retrieve the stored data for the given refresh token.

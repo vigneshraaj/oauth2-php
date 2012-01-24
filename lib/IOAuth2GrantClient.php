@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Storage engines that support the "Client Credentials"
  * grant type should implement this interface
@@ -7,8 +8,8 @@
  * @see http://tools.ietf.org/html/draft-ietf-oauth-v2-20#section-4.4
  */
 interface IOAuth2GrantClient extends IOAuth2Storage {
-  
-  /**
+
+	/**
 	 * Required for OAuth2::GRANT_TYPE_CLIENT_CREDENTIALS.
 	 *
 	 * @param $client_id

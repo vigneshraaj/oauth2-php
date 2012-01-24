@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Storage engines that support the "Resource Owner Password Credentials"
  * grant type should implement this interface
@@ -8,7 +9,7 @@
  */
 interface IOAuth2GrantUser extends IOAuth2Storage {
 
- 	/**
+	/**
 	 * Grant access tokens for basic user credentials.
 	 *
 	 * Check the supplied username and password for validity.

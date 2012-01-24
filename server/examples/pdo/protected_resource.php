@@ -12,23 +12,24 @@
 require "lib/OAuth2StoragePDO.php";
 
 try {
-  $oauth = new OAuth2(new OAuth2StoragePDO());
-  $token = $oauth->getBearerToken();
-  $oauth->verifyAccessToken($token);
+	$oauth = new OAuth2(new OAuth2StoragePDO());
+	$token = $oauth->getBearerToken();
+	$oauth->verifyAccessToken($token);
 } catch (OAuth2ServerException $oauthError) {
-  $oauthError->sendHttpResponse();
+	$oauthError->sendHttpResponse();
 }
 
 // With a particular scope, you'd do:
 // $oauth->verifyAccessToken("scope_name");
 
+
 ?>
 
 <html>
-  <head>
-    <title>Hello!</title>
-  </head>
-  <body>
-    <p>This is a secret.</p>
-  </body>
+	<head>
+		<title>Hello!</title>
+	</head>
+	<body>
+		<p>This is a secret.</p>
+	</body>
 </html>

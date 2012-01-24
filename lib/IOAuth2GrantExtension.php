@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Storage engines that support the "Extensible"
  * grant types should implement this interface
@@ -7,8 +8,8 @@
  * @see http://tools.ietf.org/html/draft-ietf-oauth-v2-20#section-4.5
  */
 interface IOAuth2GrantExtension extends IOAuth2Storage {
-  
-  /**
+
+	/**
 	 * Check any extended grant types.
 	 * 
 	 * @param string $uri

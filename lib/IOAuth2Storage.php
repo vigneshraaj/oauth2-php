@@ -1,4 +1,5 @@
 <?php
+
 /**
  * All storage engines need to implement this interface in order to use OAuth2 server
  * 
@@ -23,7 +24,7 @@ interface IOAuth2Storage {
 	 * @ingroup oauth2_section_3
 	 */
 	public function checkClientCredentials($client_id, $client_secret = NULL);
-	
+
 	/**
 	 * Get client details corresponding client_id.
 	 *
