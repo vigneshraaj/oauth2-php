@@ -12,6 +12,9 @@ require __DIR__.'/../../../../lib/IOAuth2GrantCode.php';
 require __DIR__.'/../../../../lib/IOAuth2RefreshTokens.php';
 
 /**
+ * WARNING: This example file has not been kept up to date like the PDO example has.
+ * FIXME: Update the Mongo examples
+ * 
  * Mongo storage engine for the OAuth2 Library.
  */
 class OAuth2StorageMongo implements IOAuth2GrantCode, IOAuth2RefreshTokens {
