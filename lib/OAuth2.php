@@ -351,8 +351,16 @@ class OAuth2 {
 	 * Default configuration options are specified here.
 	 */
 	protected function setDefaultOptions() {
-		$this->conf = array(self::CONFIG_ACCESS_LIFETIME => self::DEFAULT_ACCESS_TOKEN_LIFETIME, self::CONFIG_REFRESH_LIFETIME => self::DEFAULT_REFRESH_TOKEN_LIFETIME, self::CONFIG_AUTH_LIFETIME => self::DEFAULT_AUTH_CODE_LIFETIME, self::CONFIG_WWW_REALM => self::DEFAULT_WWW_REALM, self::CONFIG_TOKEN_TYPE => self::TOKEN_TYPE_BEARER, self::CONFIG_ENFORCE_INPUT_REDIRECT => FALSE, self::CONFIG_ENFORCE_STATE => FALSE, self::CONFIG_SUPPORTED_SCOPES => array())// This is expected to be passed in on construction. Scopes can be an aribitrary string.  
-;
+		$this->conf = array(
+			self::CONFIG_ACCESS_LIFETIME => self::DEFAULT_ACCESS_TOKEN_LIFETIME,
+			self::CONFIG_REFRESH_LIFETIME => self::DEFAULT_REFRESH_TOKEN_LIFETIME,
+			self::CONFIG_AUTH_LIFETIME => self::DEFAULT_AUTH_CODE_LIFETIME,
+			self::CONFIG_WWW_REALM => self::DEFAULT_WWW_REALM,
+			self::CONFIG_TOKEN_TYPE => self::TOKEN_TYPE_BEARER,
+			self::CONFIG_ENFORCE_INPUT_REDIRECT => FALSE,
+			self::CONFIG_ENFORCE_STATE => FALSE,
+			self::CONFIG_SUPPORTED_SCOPES => array() // This is expected to be passed in on construction. Scopes can be an aribitrary string.
+		);  
 	}
 
 	/**
@@ -961,7 +969,16 @@ class OAuth2 {
 		}
 		
 		// Put humpty dumpty back together
-		return ((isset($parse_url["scheme"])) ? $parse_url["scheme"] . "://" : "") . ((isset($parse_url["user"])) ? $parse_url["user"] . ((isset($parse_url["pass"])) ? ":" . $parse_url["pass"] : "") . "@" : "") . ((isset($parse_url["host"])) ? $parse_url["host"] : "") . ((isset($parse_url["port"])) ? ":" . $parse_url["port"] : "") . ((isset($parse_url["path"])) ? $parse_url["path"] : "") . ((isset($parse_url["query"])) ? "?" . $parse_url["query"] : "") . ((isset($parse_url["fragment"])) ? "#" . $parse_url["fragment"] : "");
+		return
+			((isset($parse_url["scheme"])) ? $parse_url["scheme"] . "://" : "")
+			. ((isset($parse_url["user"])) ? $parse_url["user"]
+			. ((isset($parse_url["pass"])) ? ":" . $parse_url["pass"] : "") . "@" : "")
+			. ((isset($parse_url["host"])) ? $parse_url["host"] : "")
+			. ((isset($parse_url["port"])) ? ":" . $parse_url["port"] : "")
+			. ((isset($parse_url["path"])) ? $parse_url["path"] : "")
+			. ((isset($parse_url["query"])) ? "?" . $parse_url["query"] : "")
+			. ((isset($parse_url["fragment"])) ? "#" . $parse_url["fragment"] : "")
+		;
 	}
 
 	/**
@@ -980,7 +997,12 @@ class OAuth2 {
 	 */
 	protected function createAccessToken($client_id, $user_id, $scope = NULL) {
 		
-		$token = array("access_token" => $this->genAccessToken(), "expires_in" => $this->getVariable(self::CONFIG_ACCESS_LIFETIME), "token_type" => $this->getVariable(self::CONFIG_TOKEN_TYPE), "scope" => $scope);
+		$token = array(
+			"access_token" => $this->genAccessToken(),
+			"expires_in" => $this->getVariable(self::CONFIG_ACCESS_LIFETIME),
+			"token_type" => $this->getVariable(self::CONFIG_TOKEN_TYPE),
+			"scope" => $scope
+		);
 		
 		$this->storage->setAccessToken($token["access_token"], $client_id, $user_id, time() + $this->getVariable(self::CONFIG_ACCESS_LIFETIME), $scope);
 		

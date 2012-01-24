@@ -90,20 +90,22 @@ abstract class OAuth2Client {
 		
 		// Use predefined OAuth2.0 params, or get it from $_REQUEST.
 		foreach ( array('code', 'username', 'password') as $name ) {
-			if (isset($config[$name]))
+			if (isset($config[$name])) {
 				$this->setVariable($name, $config[$name]);
-			else if (isset($_REQUEST[$name]) && !empty($_REQUEST[$name]))
+			} else if (isset($_REQUEST[$name]) && !empty($_REQUEST[$name])) {
 				$this->setVariable($name, $_REQUEST[$name]);
+			}
 			unset($config[$name]);
 		}
 		
 		// Endpoint URIs.
 		foreach ( array('authorize_uri', 'access_token_uri', 'services_uri') as $name ) {
 			if (isset($config[$name]))
-				if (substr($config[$name], 0, 4) == "http")
+				if (substr($config[$name], 0, 4) == "http") {
 					$this->setVariable($name, $config[$name]);
-				else
+				} else {
 					$this->setVariable($name, $this->getVariable('base_uri') . $config[$name]);
+				}
 			unset($config[$name]);
 		}
 		
@@ -229,7 +231,14 @@ abstract class OAuth2Client {
 	/**
 	 * Default options for cURL.
 	 */
-	public static $CURL_OPTS = array(CURLOPT_CONNECTTIMEOUT => 10, CURLOPT_RETURNTRANSFER => TRUE, CURLOPT_HEADER => TRUE, CURLOPT_TIMEOUT => 60, CURLOPT_USERAGENT => 'oauth2-draft-v10', CURLOPT_HTTPHEADER => array("Accept: application/json"));
+	public static $CURL_OPTS = array(
+		CURLOPT_CONNECTTIMEOUT => 10,
+		CURLOPT_RETURNTRANSFER => TRUE,
+		CURLOPT_HEADER => TRUE,
+		CURLOPT_TIMEOUT => 60,
+		CURLOPT_USERAGENT => 'oauth2-draft-v10',
+		CURLOPT_HTTPHEADER => array("Accept: application/json")
+	);
 
 	/**
 	 * Set the Session.
@@ -335,7 +344,17 @@ abstract class OAuth2Client {
 	 */
 	private function getAccessTokenFromAuthorizationCode($code) {
 		if ($this->getVariable('access_token_uri') && $this->getVariable('client_id') && $this->getVariable('client_secret')) {
-			return json_decode($this->makeRequest($this->getVariable('access_token_uri'), 'POST', array('grant_type' => 'authorization_code', 'client_id' => $this->getVariable('client_id'), 'client_secret' => $this->getVariable('client_secret'), 'code' => $code, 'redirect_uri' => $this->getCurrentUri())), TRUE);
+			return json_decode($this->makeRequest(
+				$this->getVariable('access_token_uri'),
+				'POST',
+				array(
+					'grant_type' => 'authorization_code',
+					'client_id' => $this->getVariable('client_id'),
+					'client_secret' => $this->getVariable('client_secret'),
+					'code' => $code,
+					'redirect_uri' => $this->getCurrentUri()
+				)
+			), TRUE);
 		}
 		return NULL;
 	}
@@ -358,7 +377,17 @@ abstract class OAuth2Client {
 	 */
 	private function getAccessTokenFromPassword($username, $password) {
 		if ($this->getVariable('access_token_uri') && $this->getVariable('client_id') && $this->getVariable('client_secret')) {
-			return json_decode($this->makeRequest($this->getVariable('access_token_uri'), 'POST', array('grant_type' => 'password', 'client_id' => $this->getVariable('client_id'), 'client_secret' => $this->getVariable('client_secret'), 'username' => $username, 'password' => $password)), TRUE);
+			return json_decode($this->makeRequest(
+				$this->getVariable('access_token_uri'),
+				'POST',
+				array(
+					'grant_type' => 'password',
+					'client_id' => $this->getVariable('client_id'),
+					'client_secret' => $this->getVariable('client_secret'),
+					'username' => $username,
+					'password' => $password
+				)
+			), TRUE);
 		}
 		return NULL;
 	}
@@ -600,7 +629,11 @@ abstract class OAuth2Client {
 		}
 		
 		// Use port if non default.
-		$port = isset($parts['port']) && (($protocol === 'http://' && $parts['port'] !== 80) || ($protocol === 'https://' && $parts['port'] !== 443)) ? ':' . $parts['port'] : '';
+		$port = '';
+		if (isset($parts['port']) && (($protocol === 'http://' && $parts['port'] !== 80) || ($protocol === 'https://' && $parts['port'] !== 443))) {
+			$port = ':' . $parts['port'];
+		}
+		
 		
 		// Rebuild.
 		return $protocol . $parts['host'] . $port . $parts['path'] . $query;
